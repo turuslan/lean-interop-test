@@ -17,6 +17,7 @@ docker run \
   --use-api-socket \
   -v $script_dir:$docker_dir \
   --name $name \
+  -e DENO_DIR=$docker_dir/cache/deno-cache \
   -e CONTAINER_NAME=$name \
   denoland/deno \
   run -A $docker_dir/src/main.ts
