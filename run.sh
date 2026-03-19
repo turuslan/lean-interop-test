@@ -9,12 +9,12 @@ docker_dir=/lean-interop-test
 # Random id to allow running tests in parallel.
 name=lean-interop-test-$RANDOM
 
-# Mount "/var/run/docker.sock" to start client containers.
+# "--use-api-socket" to start client containers.
 # Mount project directory to share genesis and logs across tests and clients.
 # Test uses "CONTAINER_NAME" as prefix for child containers.
 docker run \
   --rm \
-  -v /var/run/docker.sock:/var/run/docker.sock \
+  --use-api-socket \
   -v $script_dir:$docker_dir \
   --name $name \
   -e CONTAINER_NAME=$name \
