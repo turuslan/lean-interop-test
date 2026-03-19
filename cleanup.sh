@@ -22,5 +22,5 @@ done
 
 # stop lost child containers
 if [[ "$lost" != "" ]]; then
-  docker stop -t 0 $lost
+  docker rm -f $lost
 fi
