@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-script_dir=$(dirname "$0")
+script_dir=$(readlink -f $(dirname "$0"))
 
 # Project directory inside docker.
 docker_dir=/lean-interop-test
