@@ -1,14 +1,20 @@
 import { TextLineStream } from "jsr:@std/streams/text-line-stream";
+import { BufWriterSync } from "https://deno.land/std@0.224.0/io/buf_writer.ts";
 import ansiRegex from "./chalk/ansi-regex.ts";
+
+const BUFFER_SIZE = 1 << 20; // 1MB
+const FLUSH_INTERVAL = 5 * 1000; // 5s
 
 const ansi_regex = ansiRegex();
 function removeAnsi(s: string) {
   return s.replaceAll(ansi_regex, "");
 }
 
+const text_encoder = new TextEncoder();
+
 interface LogFile {
   log(line: string): void;
-  close(): Promise<void>;
+  close(): void;
 }
 export function logFile(path: string): LogFile {
   const file = Deno.openSync(path, {
@@ -16,17 +22,17 @@ export function logFile(path: string): LogFile {
     create: true,
     truncate: true,
   });
-  const text_stream = new TextEncoderStream();
-  const text_writer = text_stream.writable.getWriter();
-  const pipe_promise = text_stream.readable.pipeTo(file.writable);
+  const buf = new BufWriterSync(file, BUFFER_SIZE);
   function log(line: string) {
-    text_writer.write(removeAnsi(line) + "\n");
+    buf.writeSync(text_encoder.encode(removeAnsi(line) + "\n"));
   }
+  const flush_timer = setInterval(() => buf.flush(), FLUSH_INTERVAL);
   return {
     log,
-    async close() {
-      await text_writer.close();
-      await pipe_promise;
+    close() {
+      clearInterval(flush_timer);
+      buf.flush();
+      file.close();
     },
   };
 }
