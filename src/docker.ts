@@ -61,6 +61,32 @@ async function http(
   return await res.text();
 }
 
+function parse_ref(image: string) {
+  const m_hash = image.match(/^([^@]+)(?:@(sha256:.+))?$/);
+  if (!m_hash) throw new Error(image);
+  const m_tag = m_hash[1].match(/^(.+?)(?::([^:]+))?$/);
+  if (!m_tag) throw new Error(image);
+  const parts = m_tag[1].split("/");
+  if (parts.length > 3) throw new Error(image);
+  if (parts.some((x) => x.length === 0)) throw new Error(image);
+  if (parts.length === 1) parts.unshift("library");
+  if (parts.length === 2) parts.unshift("docker.io");
+  return {
+    full: parts.join("/"),
+    tag: m_tag[2] ?? "latest",
+    hash: m_hash[2] ?? null,
+  };
+}
+
+export async function docker_pull(image: string, signal: AbortSignal) {
+  const ref = parse_ref(image);
+  await http("POST", "/images/create", {
+    query: { fromImage: ref.full, tag: ref.hash ?? ref.tag },
+    expect_json: false,
+    signal,
+  });
+}
+
 let docker_next_id = 0;
 export function dockerName() {
   const CONTAINER_NAME = Deno.env.get("CONTAINER_NAME");
