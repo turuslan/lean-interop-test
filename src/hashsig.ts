@@ -109,12 +109,19 @@ class Cache {
   }
 }
 
+export interface HashsigInfo {
+  pks: string[];
+  manifest_path: string;
+  sk_path(i: number): string;
+  pk_path(i: number): string;
+  sk_name(i: number): string;
+}
 export async function hashsig_generate(
   dir: string,
   epochs_log: number,
   count: number,
   signal: AbortSignal,
-) {
+): Promise<HashsigInfo> {
   const cache = new Cache(epochs_log);
   await cache.generate(count, signal);
   Deno.mkdirSync(dir, { recursive: true });

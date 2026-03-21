@@ -1,5 +1,5 @@
 import { join } from "jsr:@std/path/join";
-import { hashsig_generate } from "./hashsig.ts";
+import { hashsig_generate, HashsigInfo } from "./hashsig.ts";
 import { joinLines, range } from "./reuse.ts";
 import { enr_generate, LOCALHOST, nodeKey } from "./enr.ts";
 import { dirname } from "jsr:@std/path/dirname";
@@ -8,7 +8,12 @@ function nodeKeyPath(dir: string, i: number) {
   return join(dir, `node-key/${i}`);
 }
 
-function getPorts(i: number) {
+export interface Ports {
+  quic: number;
+  metrics: number;
+  api: number;
+}
+function getPorts(i: number): Ports {
   const base = 10000 + i * 3;
   return {
     quic: base,
@@ -17,11 +22,24 @@ function getPorts(i: number) {
   };
 }
 
+export interface GenesisLayout {
+  validators: number;
+  names: string[];
+}
+export interface GenesisInfo {
+  hashsig: HashsigInfo;
+  genesis_time: number;
+  config_yaml_path: string;
+  nodes_yaml_path: string;
+  annotated_validators_yaml_path: string;
+  nodeKeyPath(i: number): string;
+  ports: Ports[];
+}
 export async function genesis_generate(
   dir: string,
-  layout: { validators: number; names: string[] },
+  layout: GenesisLayout,
   signal: AbortSignal,
-) {
+): Promise<GenesisInfo> {
   const aggregators = 1;
   const epochs_log = 18;
   const genesis_time_offset_s = 2;
@@ -109,11 +127,21 @@ export async function genesis_generate(
 
   return {
     hashsig,
+    genesis_time: genesis_time_s * 1000,
     config_yaml_path,
     nodes_yaml_path,
     annotated_validators_yaml_path,
     nodeKeyPath(i: number) {
       return nodeKeyPath(dir, i);
     },
+    ports,
   };
+}
+
+export interface ClientArgs {
+  genesis_dir: string;
+  name: string;
+  data_dir: string;
+  ports: Ports;
+  node_key_path: string;
 }
