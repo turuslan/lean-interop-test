@@ -130,5 +130,6 @@ export async function hashsig_generate(
     pk_path(i: number) {
       return join(dir, pk_name(i));
     },
+    sk_name,
   };
 }
