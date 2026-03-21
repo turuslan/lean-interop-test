@@ -1,6 +1,12 @@
 import { join } from "jsr:@std/path/join";
 import { hardlinkOverwrite, joinLines, range, tmpDir } from "./reuse.ts";
-import { docker_run, dockerName, pathInDocker, ROOT_DIR } from "./docker.ts";
+import {
+  docker_pull,
+  docker_run,
+  dockerName,
+  pathInDocker,
+  ROOT_DIR,
+} from "./docker.ts";
 import { existsSync } from "jsr:@std/fs/exists";
 import { encodeHex } from "jsr:@std/encoding/hex";
 
@@ -65,6 +71,7 @@ class Cache {
     console.info(`generating ${missing.length} more hashsig keys`);
     const tmp_dir = tmpDir(join(ROOT_DIR, "cache/hashsig-tmp"));
     try {
+      await docker_pull(DOCKER_IMAGE, signal);
       await docker_run(dockerName(), DOCKER_IMAGE, [
         "/usr/local/bin/hashsig",
         "generate",
