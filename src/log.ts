@@ -10,10 +10,12 @@ function removeAnsi(s: string) {
   return s.replaceAll(ansi_regex, "");
 }
 
+export type LogFn = (line: string) => void;
+
 const text_encoder = new TextEncoder();
 
 interface LogFile {
-  log(line: string): void;
+  log: LogFn;
   close(): void;
 }
 export function logFile(path: string): LogFile {
@@ -39,7 +41,7 @@ export function logFile(path: string): LogFile {
 
 export async function logProcess(
   process: Deno.ChildProcess,
-  log: (line: string) => void,
+  log: LogFn,
 ) {
   await Promise.all([process.stdout, process.stderr].map(async (stream) => {
     for await (

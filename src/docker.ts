@@ -2,7 +2,7 @@ import { dirname } from "jsr:@std/path/dirname";
 import { common } from "jsr:@std/path/common";
 import { join } from "jsr:@std/path/join";
 import { relative } from "jsr:@std/path/relative";
-import { logFile } from "./log.ts";
+import { logFile, LogFn } from "./log.ts";
 import { Buffer } from "jsr:@std/io/buffer";
 import { TextLineStream } from "jsr:@std/streams/text-line-stream";
 
@@ -117,7 +117,7 @@ export async function docker_stop(name: string) {
 
 async function demux(
   readable: ReadableStream<Uint8Array>,
-  log: (line: string) => void,
+  log: LogFn,
 ) {
   const buffer = new Buffer();
   const stdout = new TransformStream();
@@ -175,7 +175,7 @@ async function demux(
 
 async function dockerLog(
   name: string,
-  log: (line: string) => void,
+  log: LogFn,
 ) {
   const res: Response = await http("GET", `/containers/${name}/logs`, {
     query: { follow: 1, stdout: 1, stderr: 1 },
