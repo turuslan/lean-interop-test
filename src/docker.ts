@@ -217,6 +217,7 @@ export async function docker_run(
         HostConfig: {
           AutoRemove: true,
           Binds: [`${CONTAINER_DIR}:${ROOT_DIR_IN_DOCKER}`],
+          NetworkMode: "host",
           SecurityOpt: ["seccomp=unconfined"],
         },
       },
