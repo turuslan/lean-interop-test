@@ -194,15 +194,13 @@ export async function docker_run(
   name: string,
   image: string,
   cmd: string[],
+  log: LogFn,
   signal: AbortSignal,
 ) {
   const CONTAINER_DIR = Deno.env.get("CONTAINER_DIR");
   if (CONTAINER_DIR === undefined) {
     throw new Error("CONTAINER_DIR env is missing");
   }
-  const log_path = join(ROOT_DIR, `data/${name}.log`);
-  Deno.mkdirSync(dirname(log_path), { recursive: true });
-  const log = logFile(log_path);
   let logs_promise = Promise.resolve();
   let exit_msg = "start error";
   try {
@@ -223,12 +221,12 @@ export async function docker_run(
       },
       signal,
     });
-    log.log(`START ${JSON.stringify(cmd)}`);
+    log(`START ${JSON.stringify(cmd)}`);
     await http("POST", `/containers/${name}/start`, {
       expect_json: false,
       signal,
     });
-    logs_promise = dockerLog(name, log.log);
+    logs_promise = dockerLog(name, log);
     const status = await http("POST", `/containers/${name}/wait`, {
       query: { condition: "removed" },
       signal,
@@ -237,8 +235,7 @@ export async function docker_run(
   } finally {
     await docker_stop(name);
     await logs_promise;
-    log.log(`EXIT ${exit_msg}`);
-    log.close();
+    log(`EXIT ${exit_msg}`);
     signal.throwIfAborted();
   }
 }

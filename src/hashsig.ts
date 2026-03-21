@@ -72,17 +72,23 @@ class Cache {
     const tmp_dir = tmpDir(join(ROOT_DIR, "cache/hashsig-tmp"));
     try {
       await docker_pull(DOCKER_IMAGE, signal);
-      await docker_run(dockerName(), DOCKER_IMAGE, [
-        "/usr/local/bin/hashsig",
-        "generate",
-        ...["--num-validators", `${missing.length}`],
-        ...["--log-num-active-epochs", `${this.epochs_log}`],
-        ...[
-          "--output-dir",
-          pathInDocker(tmp_dir),
+      await docker_run(
+        dockerName(),
+        DOCKER_IMAGE,
+        [
+          "/usr/local/bin/hashsig",
+          "generate",
+          ...["--num-validators", `${missing.length}`],
+          ...["--log-num-active-epochs", `${this.epochs_log}`],
+          ...[
+            "--output-dir",
+            pathInDocker(tmp_dir),
+          ],
+          ...["--export-format", "ssz"],
         ],
-        ...["--export-format", "ssz"],
-      ], signal);
+        (line) => console.info(`hashsig: ${line}`),
+        signal,
+      );
       for (const [i, item] of missing.entries()) {
         const tmp_item = join(tmp_dir, "item");
         Deno.mkdirSync(tmp_item, { recursive: true });
