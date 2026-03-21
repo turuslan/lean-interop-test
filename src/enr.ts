@@ -61,7 +61,7 @@ function rlpList(v: Uint8Array) {
   return rlpBytesInternal(RlpListPrefix1, v);
 }
 
-export function enr(sk: string, ip: number, quic_port: number) {
+export function make(sk: string, ip: number, quic_port: number) {
   const sk_bytes = decodeHex(sk);
   const sequence = 1;
   const pk = secp256k1.getPublicKey(sk_bytes, true);
@@ -81,6 +81,17 @@ export function enr(sk: string, ip: number, quic_port: number) {
     rlpBytes(sig),
     content,
   ])));
+}
+
+const cache = new Map<string, string>();
+export function enr_generate(sk: string, ip: number, quic_port: number) {
+  const k = `${sk}-${ip}-${quic_port}`;
+  let v = cache.get(k);
+  if (v === undefined) {
+    v = make(sk, ip, quic_port);
+    cache.set(k, v);
+  }
+  return v;
 }
 
 export const LOCALHOST = 0x7f000001;

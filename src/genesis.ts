@@ -1,7 +1,7 @@
 import { join } from "jsr:@std/path/join";
 import { hashsig_generate } from "./hashsig.ts";
 import { joinLines, range } from "./reuse.ts";
-import { enr, LOCALHOST, nodeKey } from "./enr.ts";
+import { enr_generate, LOCALHOST, nodeKey } from "./enr.ts";
 import { dirname } from "jsr:@std/path/dirname";
 
 function nodeKeyPath(dir: string, i: number) {
@@ -62,7 +62,7 @@ export async function genesis_generate(
     nodes_yaml_path,
     joinLines(
       node_keys.map((node_key, i) =>
-        `- ${enr(node_key, LOCALHOST, ports[i].quic)}`
+        `- ${enr_generate(node_key, LOCALHOST, ports[i].quic)}`
       ),
     ),
   );
