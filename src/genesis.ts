@@ -34,6 +34,7 @@ export interface GenesisInfo {
   annotated_validators_yaml_path: string;
   nodeKeyPath(i: number): string;
   ports: Ports[];
+  isAggregator(i: number): boolean;
 }
 export async function genesis_generate(
   dir: string,
@@ -135,6 +136,9 @@ export async function genesis_generate(
       return nodeKeyPath(dir, i);
     },
     ports,
+    isAggregator(i: number) {
+      return i < aggregators;
+    },
   };
 }
 
