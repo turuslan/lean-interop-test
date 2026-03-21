@@ -202,6 +202,7 @@ export async function docker_run(
     throw new Error("CONTAINER_DIR env is missing");
   }
   let logs_promise = Promise.resolve();
+  let exit_msg = "start error";
   try {
     await http("POST", "/containers/create", {
       query: { name },
@@ -226,14 +227,20 @@ export async function docker_run(
       signal,
     });
     logs_promise = dockerLog(name, log);
-    await http("POST", `/containers/${name}/wait`, {
+    exit_msg = "wait error";
+    const status = await http("POST", `/containers/${name}/wait`, {
       query: { condition: "removed" },
       signal,
     });
+    exit_msg = JSON.stringify(status);
+    if (status.StatusCode !== 0) {
+      throw new Error(`${JSON.stringify(cmd)}: ${JSON.stringify(status)}`);
+    }
   } finally {
+    if (signal.aborted) exit_msg = "aborted";
     await docker_stop(name);
     await logs_promise;
-    log("EXIT");
+    log(`EXIT ${exit_msg}`);
     signal.throwIfAborted();
   }
 }
