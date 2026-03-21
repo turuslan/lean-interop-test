@@ -6,7 +6,7 @@ import {
   dockerName,
   ROOT_DIR,
 } from "./docker.ts";
-import { withSignal } from "./reuse.ts";
+import { removePath, withSignal } from "./reuse.ts";
 import { ClientArgs, genesis_generate } from "./genesis.ts";
 import { logFile } from "./log.ts";
 
@@ -54,6 +54,7 @@ export async function runTest(
   args: { clients: TestClientArg[]; timeout_slots: number },
 ) {
   const root_dir = join(ROOT_DIR, "data");
+  removePath(root_dir, true);
   const genesis_dir = join(root_dir, "genesis");
   const names = args.clients.map((client, i) => `${client.NAME}_${i}`);
   await withSignal(async (abort, signal) => {
