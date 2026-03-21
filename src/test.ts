@@ -73,8 +73,12 @@ export async function runTest(
       node_key_path: genesis.nodeKeyPath(i),
     }));
     const logs = names.map((name) => logFile(join(root_dir, `${name}.log`)));
+    let result = "error";
     const timeout_timer = setTimeout(
-      () => abort.abort(),
+      () => {
+        result = "timeout";
+        abort.abort();
+      },
       (genesis.genesis_time - Date.now()) + args.timeout_slots * SLOT_DURATION,
     );
     const clients = args.clients.map<TestClient>((client, i) => ({
@@ -86,7 +90,7 @@ export async function runTest(
           cmd.push("--is-aggregator");
         }
         if (this.process_promise !== null) {
-          throw new Error(`${name} already/still started`);
+          throw new Error(`${names[i]} already/still started`);
         }
         this.process_promise = docker_run(
           dockerName(),
@@ -95,12 +99,11 @@ export async function runTest(
           logs[i].log,
           signal,
         )
-          .finally(() => {
+          .catch(() => {})
+          .then(() => {
             this.process_promise = null;
-          })
-          .catch(() => {
             if (signal.aborted) return;
-            console.info(`${name} was not expected to stop`);
+            console.info(`${names[i]} was not expected to stop`);
             abort.abort();
           });
       },
@@ -108,8 +111,12 @@ export async function runTest(
     const test = new Test(genesis.genesis_time, clients, signal);
     try {
       await test_fn(test);
-      console.info("test ok");
+      result = "ok";
       abort.abort();
+    } catch (e) {
+      if (!signal.aborted) {
+        console.warn("runTest", e);
+      }
     } finally {
       clearTimeout(timeout_timer);
       await Promise.all(
@@ -120,6 +127,7 @@ export async function runTest(
       for (const log of logs) {
         log.close();
       }
+      console.info(`RESULT ${result}`);
     }
   });
 }
