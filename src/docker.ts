@@ -95,6 +95,12 @@ export async function docker_pull(image: string, signal: AbortSignal) {
   });
 }
 
+export async function docker_pull_many(images: string[], signal: AbortSignal) {
+  for (const image of new Set(images)) {
+    await docker_pull(image, signal);
+  }
+}
+
 let docker_next_id = 0;
 export function dockerName() {
   const CONTAINER_NAME = Deno.env.get("CONTAINER_NAME");
