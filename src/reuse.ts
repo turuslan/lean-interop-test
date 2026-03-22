@@ -46,3 +46,17 @@ export async function withSignal<T>(
     removeListenersAndAbort();
   }
 }
+
+type EventMap<T> = {
+  [K in keyof T as K extends `on${infer E}` ? E : never]: T[K] extends
+    { (a: infer A): any } | null ? A
+    : never;
+};
+export function on<T extends EventTarget, E extends keyof EventMap<T> & string>(
+  target: T,
+  event: E,
+  f: (a: EventMap<T>[E]) => any,
+) {
+  target.addEventListener(event, f as any);
+  return () => target.removeEventListener(event, f as any);
+}
