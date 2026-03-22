@@ -113,12 +113,12 @@ export async function runTest(
     try {
       await test_fn(test);
       result = "ok";
-      abort.abort();
     } catch (e) {
       if (!signal.aborted) {
         console.warn("runTest", e);
       }
     } finally {
+      abort.abort();
       clearTimeout(timeout_timer);
       await Promise.all(
         clients
