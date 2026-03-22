@@ -9,6 +9,7 @@ import {
 import { removePath, withSignal } from "./reuse.ts";
 import { ClientArgs, genesis_generate } from "./genesis.ts";
 import { logFile } from "./log.ts";
+import { fetchMetrics, Metrics } from "./metrics.ts";
 
 const SLOT_DURATION = 4000;
 const PHASES = 5;
@@ -17,6 +18,7 @@ interface TestClient {
   name: string;
   process_promise: Promise<void> | null;
   start(): void;
+  metrics(): Promise<Metrics>;
 }
 
 export class Test {
@@ -41,6 +43,15 @@ export class Test {
       return;
     }
     await delay(time - now, { signal: this.signal });
+  }
+
+  async metrics(
+    clients: TestClient[],
+    on_metrics: (client: TestClient, metrics: Metrics) => void,
+  ) {
+    await Promise.all(
+      clients.map(async (client) => on_metrics(client, await client.metrics())),
+    );
   }
 }
 
@@ -107,6 +118,12 @@ export async function runTest(
             console.info(`${names[i]} was not expected to stop`);
             abort.abort();
           });
+      },
+      async metrics() {
+        return await fetchMetrics(
+          `http://127.0.0.1:${genesis.ports[i].metrics}/metrics`,
+          signal,
+        );
       },
     }));
     const test = new Test(genesis.genesis_time, clients, signal);
