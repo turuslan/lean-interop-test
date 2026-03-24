@@ -13,16 +13,19 @@ const slots = 5;
 
 async function test_production_and_finality(test: Test) {
   test.start(test.clients);
+const checks = new Checks();
   for (let slot = 1; slot <= slots; ++slot) {
     await test.waitSlot(slot, 1);
-    const checks = new Checks();
+    const chains = new Set<string>();
     await test.metrics(test.clients, (client, metrics, chain) => {
+chains.add(`${chain.finalized} ${chain.justified} ${chain.head}`);
       checks.expectChainAt(client, chain, "head", slot);
       checks.expectChainAt(client, chain, "justified", chain.head - 2);
       checks.expectChainAt(client, chain, "finalized", chain.justified - 1);
     });
-    checks.throwIfAny();
+    console.info(`slot ${slot}: ${[...chains].join(", ")}`);
   }
+checks.throwIfAny();
 }
 
 for (
