@@ -23,6 +23,7 @@ docker run \
   --user $(id -u):$(id -g) \
   --group-add $docker_gid \
   --use-api-socket \
+  --network host \
   -v $script_dir:$docker_dir \
   --name $name \
   -e DENO_DIR=$docker_dir/cache/deno-cache \
