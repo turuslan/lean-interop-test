@@ -31,6 +31,7 @@ export interface GenesisInfo {
   genesis_time: number;
   config_yaml_path: string;
   nodes_yaml_path: string;
+  validators_yaml_path: string;
   annotated_validators_yaml_path: string;
   nodeKeyPath(i: number): string;
   ports: Ports[];
@@ -86,6 +87,18 @@ export async function genesis_generate(
     ),
   );
 
+  const validators_yaml_path = join(
+    dir,
+    "validators.yaml",
+  );
+  Deno.writeTextFileSync(
+    validators_yaml_path,
+    joinLines(layout.names.flatMap((name, i) => [
+      `${name}:`,
+      `  - ${i}`,
+    ])),
+  );
+
   const annotated_validators_yaml_path = join(
     dir,
     "annotated_validators.yaml",
@@ -131,6 +144,7 @@ export async function genesis_generate(
     genesis_time: genesis_time_s * 1000,
     config_yaml_path,
     nodes_yaml_path,
+    validators_yaml_path,
     annotated_validators_yaml_path,
     nodeKeyPath(i: number) {
       return nodeKeyPath(dir, i);
@@ -148,4 +162,7 @@ export interface ClientArgs {
   data_dir: string;
   ports: Ports;
   node_key_path: string;
+  config_yaml_path: string;
+  nodes_yaml_path: string;
+  validators_yaml_path: string;
 }
