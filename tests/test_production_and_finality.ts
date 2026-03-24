@@ -21,6 +21,7 @@ for (
   const clients of [
     [ZEAM, ZEAM],
     [ZEAM, ZEAM, ZEAM],
+    [ZEAM, ZEAM, ZEAM, ZEAM],
   ]
 ) {
   addTest(test_production_and_finality, {
