@@ -193,6 +193,7 @@ export async function runTests(signal: AbortSignal) {
     if (!signal.aborted) {
       console.info(`RUN TEST ${test.label}`);
       await runTest(test, signal);
+      console.info();
     } else {
       console.info(`CANCEL TEST ${test.label}`);
     }
