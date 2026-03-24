@@ -114,12 +114,15 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
       data_dir: join(root_dir, name),
       ports: genesis.ports[i],
       node_key_path: genesis.nodeKeyPath(i),
+      xmss_sk_path: genesis.hashsig.sk_path(i),
+      xmss_pk_path: genesis.hashsig.pk_path(i),
       config_yaml_path: genesis.config_yaml_path,
       nodes_yaml_path: genesis.nodes_yaml_path,
       validators_yaml_path: genesis.validators_yaml_path,
       validator_keys_manifest_yaml_path:
         genesis.validator_keys_manifest_yaml_path,
       hash_sig_keys_dir: genesis.hash_sig_keys_dir,
+      validator_config_yaml_path: genesis.validator_config_yaml_path,
     }));
     const logs = names.map((name) => logFile(join(root_dir, `${name}.log`)));
     let result = "error";

@@ -35,6 +35,7 @@ export interface GenesisInfo {
   annotated_validators_yaml_path: string;
   validator_keys_manifest_yaml_path: string;
   hash_sig_keys_dir: string;
+  validator_config_yaml_path: string;
   nodeKeyPath(i: number): string;
   ports: Ports[];
   isAggregator(i: number): boolean;
@@ -123,6 +124,7 @@ export async function genesis_generate(
   Deno.writeTextFileSync(
     validator_config_yaml_path,
     joinLines([
+      "shuffle: roundrobin",
       "validators:",
       ...layout.names.flatMap((name, i) => [
         `  - name: "${name}"`,
@@ -132,6 +134,7 @@ export async function genesis_generate(
         `      quic: ${ports[i].quic}`,
         `    metricsPort: ${ports[i].metrics}`,
         `    apiPort: ${ports[i].api}`,
+        "    count: 1",
       ]),
     ]),
   );
@@ -151,6 +154,7 @@ export async function genesis_generate(
     annotated_validators_yaml_path,
     validator_keys_manifest_yaml_path: hashsig.manifest_path,
     hash_sig_keys_dir,
+    validator_config_yaml_path,
     nodeKeyPath(i: number) {
       return nodeKeyPath(dir, i);
     },
@@ -167,9 +171,12 @@ export interface ClientArgs {
   data_dir: string;
   ports: Ports;
   node_key_path: string;
+  xmss_sk_path: string;
+  xmss_pk_path: string;
   config_yaml_path: string;
   nodes_yaml_path: string;
   validators_yaml_path: string;
   validator_keys_manifest_yaml_path: string;
   hash_sig_keys_dir: string;
+  validator_config_yaml_path: string;
 }

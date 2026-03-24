@@ -3,6 +3,7 @@ import * as REAM from "../clients/ream.ts";
 import * as ETHLAMBDA from "../clients/ethlambda.ts";
 import * as GEAN from "../clients/gean.ts";
 import * as GRANDINE from "../clients/grandine.ts";
+import * as LANTERN from "../clients/lantern.ts";
 import { addTest, Checks, Test } from "../src/test.ts";
 
 const slots = 5;
@@ -28,7 +29,7 @@ for (
     [ZEAM, ZEAM, ZEAM, ZEAM],
 
 
-    [GRANDINE, GRANDINE],
+    [LANTERN, LANTERN],
   ]
 ) {
   addTest(test_production_and_finality, {
