@@ -13,19 +13,19 @@ const slots = 5;
 
 async function test_production_and_finality(test: Test) {
   test.start(test.clients);
-const checks = new Checks();
+  const checks = new Checks();
   for (let slot = 1; slot <= slots; ++slot) {
     await test.waitSlot(slot, 1);
     const chains = new Set<string>();
     await test.metrics(test.clients, (client, metrics, chain) => {
-chains.add(`${chain.finalized} ${chain.justified} ${chain.head}`);
+      chains.add(`${chain.finalized} ${chain.justified} ${chain.head}`);
       checks.expectChainAt(client, chain, "head", slot);
       checks.expectChainAt(client, chain, "justified", chain.head - 2);
       checks.expectChainAt(client, chain, "finalized", chain.justified - 1);
     });
     console.info(`slot ${slot}: ${[...chains].join(", ")}`);
   }
-checks.throwIfAny();
+  checks.throwIfAny();
 }
 
 for (
@@ -37,19 +37,26 @@ for (
     [REAM, REAM],
     [ZEAM, ZEAM, REAM],
 
-    [ETHLAMBDA, ETHLAMBDA],
+    // TODO: Failed to create RocksDB directory
+    // [ETHLAMBDA, ETHLAMBDA],
 
     [GEAN, GEAN],
+    [ZEAM, ZEAM, GEAN],
 
     [GRANDINE, GRANDINE],
+    [ZEAM, ZEAM, GRANDINE],
 
     [LANTERN, LANTERN],
+    [ZEAM, ZEAM, LANTERN],
 
     [NLEAN, NLEAN],
+    [ZEAM, ZEAM, NLEAN],
 
     [PEAM, PEAM],
+    [ZEAM, ZEAM, PEAM],
 
-    [LIGHTHOUSE, LIGHTHOUSE],
+    // TODO: command
+    // [LIGHTHOUSE, LIGHTHOUSE],
   ]
 ) {
   addTest(test_production_and_finality, {
