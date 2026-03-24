@@ -1,5 +1,6 @@
 import * as ZEAM from "../clients/zeam.ts";
 import * as REAM from "../clients/ream.ts";
+import * as ETHLAMBDA from "../clients/ethlambda.ts";
 import { addTest, Checks, Test } from "../src/test.ts";
 
 const slots = 5;
@@ -24,8 +25,8 @@ for (
     [ZEAM, ZEAM, ZEAM],
     [ZEAM, ZEAM, ZEAM, ZEAM],
 
-    [REAM, REAM],
-    [ZEAM, ZEAM, REAM],
+
+    [ETHLAMBDA, ETHLAMBDA],
   ]
 ) {
   addTest(test_production_and_finality, {
