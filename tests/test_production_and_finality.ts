@@ -10,7 +10,7 @@ async function test_production_and_finality(test: Test) {
     const checks = new Checks();
     await test.metrics(test.clients, (client, metrics, chain) => {
       checks.expectChainAt(client, chain, "head", slot);
-      checks.expectChainAt(client, chain, "justified", slot - 2);
+      checks.expectChainAt(client, chain, "justified", chain.head - 2);
       checks.expectChainAt(client, chain, "finalized", chain.justified - 1);
     });
     checks.throwIfAny();
