@@ -62,7 +62,7 @@ export class Test {
     await Promise.all(
       clients.map(async (client) => {
         const metrics = await client.metrics();
-        on_metrics(client, metrics, {
+        return on_metrics(client, metrics, {
           head: metrics.lean_head_slot,
           justified: metrics.lean_latest_justified_slot,
           finalized: metrics.lean_latest_finalized_slot,
@@ -186,9 +186,36 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
 export async function runTests(signal: AbortSignal) {
   for (const test of tests) {
     if (!signal.aborted) {
+      console.info(`RUN TEST ${test.label}`);
       await runTest(test, signal);
     } else {
       console.info(`CANCEL TEST ${test.label}`);
     }
+  }
+}
+
+export class Checks {
+  names = new Set<string>();
+
+  report(client: TestClient, message: string) {
+    this.names.add(client.name);
+    console.error(`${client.name}: ${message}`);
+  }
+
+  throwIfAny() {
+    if (this.names.size === 0) return;
+    throw new Error(
+      `reported clients ${this.names.size} [${[...this.names].join(" ")}]`,
+    );
+  }
+
+  expectChainAt(
+    client: TestClient,
+    chain: ChainMetrics,
+    key: keyof ChainMetrics,
+    expected: number,
+  ) {
+    if (chain[key] >= expected) return;
+    this.report(client, `${key} ${chain[key]} < ${expected}`);
   }
 }
