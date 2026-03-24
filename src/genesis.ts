@@ -33,6 +33,7 @@ export interface GenesisInfo {
   nodes_yaml_path: string;
   validators_yaml_path: string;
   annotated_validators_yaml_path: string;
+  validator_keys_manifest_yaml_path: string;
   nodeKeyPath(i: number): string;
   ports: Ports[];
   isAggregator(i: number): boolean;
@@ -146,6 +147,7 @@ export async function genesis_generate(
     nodes_yaml_path,
     validators_yaml_path,
     annotated_validators_yaml_path,
+    validator_keys_manifest_yaml_path: hashsig.manifest_path,
     nodeKeyPath(i: number) {
       return nodeKeyPath(dir, i);
     },
@@ -165,4 +167,5 @@ export interface ClientArgs {
   config_yaml_path: string;
   nodes_yaml_path: string;
   validators_yaml_path: string;
+  validator_keys_manifest_yaml_path: string;
 }

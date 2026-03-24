@@ -117,6 +117,8 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
       config_yaml_path: genesis.config_yaml_path,
       nodes_yaml_path: genesis.nodes_yaml_path,
       validators_yaml_path: genesis.validators_yaml_path,
+      validator_keys_manifest_yaml_path:
+        genesis.validator_keys_manifest_yaml_path,
     }));
     const logs = names.map((name) => logFile(join(root_dir, `${name}.log`)));
     let result = "error";
