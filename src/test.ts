@@ -128,6 +128,9 @@ export async function runTest(
     }));
     const test = new Test(genesis.genesis_time, clients, signal);
     try {
+      console.info(
+        `TEST ${test_fn.name} [${args.clients.map((client) => client.NAME)}]`,
+      );
       await test_fn(test);
       result = "ok";
     } catch (e) {
