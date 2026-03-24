@@ -4,6 +4,7 @@ import * as ETHLAMBDA from "../clients/ethlambda.ts";
 import * as GEAN from "../clients/gean.ts";
 import * as GRANDINE from "../clients/grandine.ts";
 import * as LANTERN from "../clients/lantern.ts";
+import * as NLEAN from "../clients/nlean.ts";
 import { addTest, Checks, Test } from "../src/test.ts";
 
 const slots = 5;
@@ -38,6 +39,8 @@ for (
     [GRANDINE, GRANDINE],
 
     [LANTERN, LANTERN],
+
+    [NLEAN, NLEAN],
   ]
 ) {
   addTest(test_production_and_finality, {
