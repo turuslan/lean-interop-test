@@ -1,5 +1,5 @@
 import * as ZEAM from "../clients/zeam.ts";
-import { runTest, Test } from "../src/test.ts";
+import { addTest, Test } from "../src/test.ts";
 
 const slots = 10;
 
@@ -25,7 +25,7 @@ for (
     [ZEAM, ZEAM, ZEAM],
   ]
 ) {
-  await runTest(test_production_and_finality, {
+  addTest(test_production_and_finality, {
     clients,
     timeout_slots: slots + 1,
   });
