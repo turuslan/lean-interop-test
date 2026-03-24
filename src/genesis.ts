@@ -34,6 +34,7 @@ export interface GenesisInfo {
   validators_yaml_path: string;
   annotated_validators_yaml_path: string;
   validator_keys_manifest_yaml_path: string;
+  hash_sig_keys_dir: string;
   nodeKeyPath(i: number): string;
   ports: Ports[];
   isAggregator(i: number): boolean;
@@ -54,8 +55,9 @@ export async function genesis_generate(
 
   Deno.mkdirSync(dir, { recursive: true });
 
+  const hash_sig_keys_dir = join(dir, "hash-sig-keys");
   const hashsig = await hashsig_generate(
-    join(dir, "hash-sig-keys"),
+    hash_sig_keys_dir,
     epochs_log,
     layout.validators,
     signal,
@@ -148,6 +150,7 @@ export async function genesis_generate(
     validators_yaml_path,
     annotated_validators_yaml_path,
     validator_keys_manifest_yaml_path: hashsig.manifest_path,
+    hash_sig_keys_dir,
     nodeKeyPath(i: number) {
       return nodeKeyPath(dir, i);
     },
@@ -168,4 +171,5 @@ export interface ClientArgs {
   nodes_yaml_path: string;
   validators_yaml_path: string;
   validator_keys_manifest_yaml_path: string;
+  hash_sig_keys_dir: string;
 }
