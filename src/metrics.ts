@@ -8,7 +8,7 @@ function parseMetrics(text: string): Metrics {
     if (!line || line.startsWith("#")) {
       continue;
     }
-    const m = line.match(/^(.+) ([-0-9.e]+)$/)!;
+    const m = line.match(/^(.+) ([-+0-9.e]+)$/)!;
     metrics[m[1]] = parseFloat(m[2]);
   }
   return metrics;
