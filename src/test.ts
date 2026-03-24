@@ -21,6 +21,12 @@ interface TestClient {
   metrics(): Promise<Metrics>;
 }
 
+export interface ChainMetrics {
+  head: number;
+  justified: number;
+  finalized: number;
+}
+
 export class Test {
   constructor(
     public genesis_time: number,
@@ -47,10 +53,21 @@ export class Test {
 
   async metrics(
     clients: TestClient[],
-    on_metrics: (client: TestClient, metrics: Metrics) => void,
+    on_metrics: (
+      client: TestClient,
+      metrics: Metrics,
+      chain: ChainMetrics,
+    ) => void,
   ) {
     await Promise.all(
-      clients.map(async (client) => on_metrics(client, await client.metrics())),
+      clients.map(async (client) => {
+        const metrics = await client.metrics();
+        on_metrics(client, metrics, {
+          head: metrics.lean_head_slot,
+          justified: metrics.lean_latest_justified_slot,
+          finalized: metrics.lean_latest_finalized_slot,
+        });
+      }),
     );
   }
 }

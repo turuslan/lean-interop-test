@@ -10,11 +10,10 @@ async function test_production_and_finality(test: Test) {
     console.info(`slot ${slot}`);
     await test.waitSlot(slot, 1);
 
-    await test.metrics(test.clients, (client, metrics) => {
-      const head = metrics.lean_head_slot;
-      const justified = metrics.lean_latest_justified_slot;
-      const finalized = metrics.lean_latest_finalized_slot;
-      console.info(`  ${client.name} ${finalized} ${justified} ${head}`);
+    await test.metrics(test.clients, (client, metrics, chain) => {
+      console.info(
+        `  ${client.name} ${chain.finalized} ${chain.justified} ${chain.head}`,
+      );
     });
   }
 }
