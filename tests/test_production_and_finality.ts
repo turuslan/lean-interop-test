@@ -19,9 +19,7 @@ async function test_production_and_finality(test: Test) {
     const chains = new Set<string>();
     await test.metrics(test.clients, (client, metrics, chain) => {
       chains.add(`${chain.finalized} ${chain.justified} ${chain.head}`);
-      checks.expectChainAt(client, chain, "head", slot);
-      checks.expectChainAt(client, chain, "justified", chain.head - 2);
-      checks.expectChainAt(client, chain, "finalized", chain.justified - 1);
+      checks.expectHeadAndFinality(client, chain, slot);
     });
     console.info(`slot ${slot}: ${[...chains].join(", ")}`);
   }

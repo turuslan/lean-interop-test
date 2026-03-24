@@ -3,6 +3,7 @@ import { delay } from "jsr:@std/async/delay";
 import {
   docker_pull_many,
   docker_run,
+  docker_stop,
   dockerName,
   ROOT_DIR,
 } from "./docker.ts";
@@ -14,10 +15,18 @@ import { fetchMetrics, Metrics } from "./metrics.ts";
 const SLOT_DURATION = 4000;
 const PHASES = 5;
 
+export interface StartArgs {
+  sync?: boolean;
+  checkpoint?: TestClient;
+}
 interface TestClient {
   name: string;
+  checkpoint_sync_url: string;
+  docker_name: string | null;
+  stop_requested: boolean;
   process_promise: Promise<void> | null;
-  start(): void;
+  start(args?: StartArgs): void;
+  stop(): Promise<void>;
   metrics(): Promise<Metrics>;
 }
 
@@ -38,6 +47,11 @@ export class Test {
     for (const client of clients) {
       client.start();
     }
+  }
+
+  slot() {
+    const now = Date.now();
+    return Math.max(Math.floor((now - this.genesis_time) / SLOT_DURATION), 0);
   }
 
   async waitSlot(slot: number, phase: number) {
@@ -135,17 +149,36 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
     );
     const clients = args.clients.map<TestClient>((client, i) => ({
       name: names[i],
+      checkpoint_sync_url: `http://127.0.0.1:${
+        client_args[i].ports.api
+      }/lean/v0/states/finalized`,
+      docker_name: null,
+      stop_requested: false,
       process_promise: null,
-      start() {
+      start(args) {
         const cmd = client.dockerCmd(client_args[i]);
         if (genesis.isAggregator(i)) {
           cmd.push("--is-aggregator");
         }
+        if (args?.checkpoint) {
+          if (!args?.sync) {
+            throw new Error("start({ checkpoint }) requires { sync: true }");
+          }
+          cmd.push(
+            "--checkpoint-sync-url",
+            args.checkpoint.checkpoint_sync_url,
+          );
+        }
         if (this.process_promise !== null) {
           throw new Error(`${names[i]} already/still started`);
         }
+        if (args?.sync) {
+          removePath(client_args[i].data_dir, true);
+        }
+        this.docker_name = dockerName();
+        this.stop_requested = false;
         this.process_promise = docker_run(
-          dockerName(),
+          this.docker_name,
           client.DOCKER_IMAGE,
           cmd,
           logs[i].log,
@@ -153,11 +186,22 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
         )
           .catch(() => {})
           .then(() => {
+            this.docker_name = null;
             this.process_promise = null;
+            if (this.stop_requested) return;
             if (signal.aborted) return;
             console.info(`${names[i]} was not expected to stop`);
             abort.abort();
           });
+      },
+      async stop() {
+        const { process_promise } = this;
+        if (process_promise === null) {
+          throw new Error(`${names[i]} not started`);
+        }
+        this.stop_requested = true;
+        await docker_stop(this.docker_name!);
+        await process_promise;
       },
       async metrics() {
         return await fetchMetrics(
@@ -227,5 +271,15 @@ export class Checks {
   ) {
     if (chain[key] >= expected) return;
     this.report(client, `${key} ${chain[key]} < ${expected}`);
+  }
+
+  expectHeadAndFinality(
+    client: TestClient,
+    chain: ChainMetrics,
+    slot: number,
+  ) {
+    this.expectChainAt(client, chain, "head", slot);
+    this.expectChainAt(client, chain, "justified", chain.head - 2);
+    this.expectChainAt(client, chain, "finalized", chain.justified - 1);
   }
 }
