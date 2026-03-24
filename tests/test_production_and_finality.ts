@@ -28,6 +28,14 @@ for (
     [ZEAM, ZEAM, ZEAM],
     [ZEAM, ZEAM, ZEAM, ZEAM],
 
+    [REAM, REAM],
+    [ZEAM, ZEAM, REAM],
+
+    [ETHLAMBDA, ETHLAMBDA],
+
+    [GEAN, GEAN],
+
+    [GRANDINE, GRANDINE],
 
     [LANTERN, LANTERN],
   ]
