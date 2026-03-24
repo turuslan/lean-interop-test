@@ -5,6 +5,7 @@ import * as GEAN from "../clients/gean.ts";
 import * as GRANDINE from "../clients/grandine.ts";
 import * as LANTERN from "../clients/lantern.ts";
 import * as NLEAN from "../clients/nlean.ts";
+import * as PEAM from "../clients/peam.ts";
 import { addTest, Checks, Test } from "../src/test.ts";
 
 const slots = 5;
@@ -41,6 +42,8 @@ for (
     [LANTERN, LANTERN],
 
     [NLEAN, NLEAN],
+
+    [PEAM, PEAM],
   ]
 ) {
   addTest(test_production_and_finality, {
