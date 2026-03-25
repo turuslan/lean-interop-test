@@ -8,8 +8,8 @@
 # get all "lean-interop-test-*" containers
 containers=$(docker ps -a --format '{{.Names}}' | grep -P '^lean-interop-test-' || true)
 
-# get all "lean-interop-test-PARENT" parent containers
-parents=$(echo "$containers" | grep -P '^lean-interop-test-\d+$' || true)
+# get all running "lean-interop-test-PARENT" parent containers
+parents=$(docker ps --format '{{.Names}}' | grep -P '^lean-interop-test-\d+$' || true)
 
 # assume all containers without parent lost
 lost=$containers
