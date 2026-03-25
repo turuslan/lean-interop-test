@@ -216,7 +216,7 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
       result = "ok";
     } catch (e) {
       if (!signal.aborted) {
-        console.warn("runTest", e);
+        console.info("runTest", e);
       }
     } finally {
       abort.abort();
@@ -253,7 +253,7 @@ export class Checks {
 
   report(client: TestClient, message: string) {
     this.names.add(client.name);
-    console.error(`${client.name}: ${message}`);
+    console.info(`${client.name}: ${message}`);
   }
 
   throwIfAny() {

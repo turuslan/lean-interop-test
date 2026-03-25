@@ -56,8 +56,8 @@ async function http(
     ...signal ? { signal } : {},
   });
   if (expect_ok && !res.ok) {
-    console.warn(`${method} ${url.pathname}${url.search} = ${res.status}`);
-    console.warn(await res.text());
+    console.info(`${method} ${url.pathname}${url.search} = ${res.status}`);
+    console.info(await res.text());
     throw new Error();
   }
   if (expect_raw) {
