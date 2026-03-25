@@ -7,6 +7,7 @@ import * as LANTERN from "../clients/lantern.ts";
 import * as NLEAN from "../clients/nlean.ts";
 import * as PEAM from "../clients/peam.ts";
 import * as LIGHTHOUSE from "../clients/lighthouse.ts";
+import * as QLEAN from "../clients/qlean.ts";
 import { addTest, Checks, Test } from "../src/test.ts";
 
 const slots = 5;
@@ -56,6 +57,9 @@ for (
 
     // TODO: command
     // [LIGHTHOUSE, LIGHTHOUSE],
+
+    // TODO: Address already in use
+    // [QLEAN, QLEAN],
   ]
 ) {
   addTest(test_production_and_finality, {
