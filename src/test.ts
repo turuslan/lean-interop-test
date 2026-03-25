@@ -65,15 +65,15 @@ export class Test {
     await delay(time - now, { signal: this.signal });
   }
 
-  async metrics(
+  async metrics<T>(
     clients: TestClient[],
     on_metrics: (
       client: TestClient,
       metrics: Metrics,
       chain: ChainMetrics,
-    ) => void,
+    ) => T,
   ) {
-    await Promise.all(
+    return await Promise.all(
       clients.map(async (client) => {
         const metrics = await client.metrics();
         return on_metrics(client, metrics, {
@@ -241,10 +241,10 @@ export async function runTests(signal: AbortSignal) {
     if (!signal.aborted) {
       console.info(`RUN TEST ${test.label}`);
       await runTest(test, signal);
-      console.info();
     } else {
       console.info(`CANCEL TEST ${test.label}`);
     }
+    console.info();
   }
 }
 

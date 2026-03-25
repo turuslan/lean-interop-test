@@ -16,11 +16,12 @@ async function test_production_and_finality(test: Test) {
   const checks = new Checks();
   for (let slot = 1; slot <= slots; ++slot) {
     await test.waitSlot(slot, 1);
-    const chains = new Set<string>();
-    await test.metrics(test.clients, (client, metrics, chain) => {
-      chains.add(`${chain.finalized} ${chain.justified} ${chain.head}`);
-      checks.expectHeadAndFinality(client, chain, slot);
-    });
+    const chains = new Set(
+      await test.metrics(test.clients, (client, metrics, chain) => {
+        checks.expectHeadAndFinality(client, chain, slot);
+        return `${chain.finalized} ${chain.justified} ${chain.head}`;
+      }),
+    );
     console.info(`slot ${slot}: ${[...chains].join(", ")}`);
   }
   checks.throwIfAny();
