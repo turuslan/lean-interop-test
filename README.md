@@ -1,10 +1,23 @@
 ## Lean interop test
 
+### About
+
+[lean-quickstart](https://github.com/blockblaz/lean-quickstart) allows creating
+genesis and running network with one or more clients.\
+To assess network stability user should manually look into logs and metrics.\
+Sometimes user wants to stop and restart particular nodes, to see that network
+recovers.
+
+This project wants to simplify these routine checks.\
+Write interop test script once, and run it with different combinations of client
+implementations.\
+Test script can start and stop nodes, read their metrics.
+
 - Add tests to ["tests"](./tests) directory.
 - Add client commands to ["clients"](./clients) directory like
   [lean-quickstart](https://github.com/blockblaz/lean-quickstart).
-- Generates genesis.
-- Caches and hardlinks hashsig keys.
+- Script generates genesis from specified config.
+- Script caches and hardlinks hashsig keys to save time and disk space.
 
 ### Scripts
 
