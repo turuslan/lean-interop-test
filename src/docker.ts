@@ -221,6 +221,7 @@ export async function docker_run(
       },
       signal,
     });
+    log(`IMAGE ${image}`);
     log(`START ${JSON.stringify(cmd)}`);
     await http("POST", `/containers/${name}/start`, {
       expect_json: false,
