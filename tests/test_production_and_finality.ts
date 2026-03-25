@@ -12,6 +12,7 @@ import { addTest, Checks, Test } from "../src/test.ts";
 
 const slots = 5;
 
+// Test blocks are produced and 3 slot finality happens when all clients are running.
 async function test_production_and_finality(test: Test) {
   test.start(test.clients);
   const checks = new Checks();

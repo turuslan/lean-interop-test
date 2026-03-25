@@ -4,6 +4,7 @@ import { addTest, Checks, StartArgs, Test } from "../src/test.ts";
 const slot1 = 5;
 const slot2 = 12;
 
+// Test blocks are produced and 3 slot finality happens after 1 of 3 clients is restarted.
 async function test_restart_args(test: Test, args: StartArgs) {
   test.start(test.clients);
   const log = (async () => {
