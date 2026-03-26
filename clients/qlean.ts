@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "qlean";
 
 export const DOCKER_IMAGE =
-  "docker.io/qdrvm/qlean-mini:devnet-3@sha256:921da287c9fff65ddd3b12b3240efaf8e93ab6f7140f34719f3d59a3cf22327d";
+  "docker.io/qdrvm/qlean-mini:devnet-3@sha256:6b84236b641c078b9ee2518c3b3c4354d27102e732287296cad92d7372fa507c";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [
