@@ -59,8 +59,7 @@ for (
     // TODO: command
     // [LIGHTHOUSE, LIGHTHOUSE],
 
-    // TODO: Address already in use
-    // [QLEAN, QLEAN],
+    [QLEAN, QLEAN],
   ]
 ) {
   addTest(test_production_and_finality, {
