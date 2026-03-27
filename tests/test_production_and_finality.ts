@@ -38,8 +38,7 @@ for (
     [REAM, REAM],
     [ZEAM, ZEAM, REAM],
 
-    // TODO: Failed to create RocksDB directory
-    // [ETHLAMBDA, ETHLAMBDA],
+    [ETHLAMBDA, ETHLAMBDA],
 
     [GEAN, GEAN],
     [ZEAM, ZEAM, GEAN],
