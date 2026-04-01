@@ -2,7 +2,7 @@ import { dirname } from "jsr:@std/path/dirname";
 import { common } from "jsr:@std/path/common";
 import { join } from "jsr:@std/path/join";
 import { relative } from "jsr:@std/path/relative";
-import { logFile, LogFn } from "./log.ts";
+import { logFile, LogFn, logProcess } from "./log.ts";
 import { Buffer } from "jsr:@std/io/buffer";
 import { TextLineStream } from "jsr:@std/streams/text-line-stream";
 
@@ -110,7 +110,16 @@ export function dockerName() {
   return `${CONTAINER_NAME}-${docker_next_id++}`;
 }
 
+const local_pids = new Map<string, number>();
 export async function docker_stop(name: string) {
+  const local_pid = local_pids.get(name);
+  if (local_pid !== undefined) {
+    try {
+      Deno.kill(local_pid, "SIGKILL");
+    } catch {
+    }
+    return;
+  }
   try {
     await http("DELETE", `/containers/${name}`, {
       query: { force: 1 },
@@ -195,8 +204,12 @@ export async function docker_run(
   image: string,
   cmd: string[],
   log: LogFn,
+  local_binary: string | undefined,
   signal: AbortSignal,
 ) {
+  if (local_binary) {
+    return await local_run([local_binary, ...cmd.slice(1)], log, signal);
+  }
   const CONTAINER_DIR = Deno.env.get("CONTAINER_DIR");
   if (CONTAINER_DIR === undefined) {
     throw new Error("CONTAINER_DIR env is missing");
@@ -235,6 +248,34 @@ export async function docker_run(
     });
     exit_msg = JSON.stringify(status);
     if (status.StatusCode !== 0) {
+      throw new Error(`${JSON.stringify(cmd)}: ${JSON.stringify(status)}`);
+    }
+  } finally {
+    if (signal.aborted) exit_msg = "aborted";
+    await docker_stop(name);
+    await logs_promise;
+    log(`EXIT ${exit_msg}`);
+    signal.throwIfAborted();
+  }
+}
+
+async function local_run(cmd: string[], log: LogFn, signal: AbortSignal) {
+  let logs_promise = Promise.resolve();
+  let exit_msg = "start error";
+  try {
+    log(`LOCAL BINARY ${cmd[0]}`);
+    log(`START ${JSON.stringify(cmd)}`);
+    const process = new Deno.Command(cmd[0], {
+      args: cmd.slice(1),
+      stdout: "piped",
+      stderr: "piped",
+      signal,
+    }).spawn();
+    local_pids.set(name, process.pid);
+    logs_promise = logProcess(process, log);
+    const status = await process.status;
+    exit_msg = JSON.stringify(status);
+    if (!status.success) {
       throw new Error(`${JSON.stringify(cmd)}: ${JSON.stringify(status)}`);
     }
   } finally {

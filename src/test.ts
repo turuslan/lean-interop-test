@@ -90,6 +90,7 @@ export interface TestClientArg {
   NAME: string;
   DOCKER_IMAGE: string;
   dockerCmd(args: ClientArgs): string[];
+  LOCAL_BINARY?: string;
 }
 interface TestArg {
   test_fn(test: Test): Promise<void>;
@@ -115,7 +116,9 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
     const genesis_dir = join(root_dir, "genesis");
     const names = args.clients.map((client, i) => `${client.NAME}_${i}`);
     await docker_pull_many(
-      args.clients.map((client) => client.DOCKER_IMAGE),
+      args.clients
+        .filter((client) => !client.LOCAL_BINARY)
+        .map((client) => client.DOCKER_IMAGE),
       signal,
     );
     const genesis = await genesis_generate(genesis_dir, {
@@ -182,6 +185,7 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
           client.DOCKER_IMAGE,
           cmd,
           logs[i].log,
+          client.LOCAL_BINARY,
           signal,
         )
           .catch(() => {})

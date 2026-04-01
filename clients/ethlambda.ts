@@ -17,3 +17,5 @@ export function dockerCmd(args: ClientArgs): string[] {
     ...["--api-port", `${args.ports.api}`],
   ];
 }
+
+export const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_ETHLAMBDA");

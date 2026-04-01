@@ -19,3 +19,5 @@ export function dockerCmd(args: ClientArgs): string[] {
     ...["--log", "Trace"],
   ];
 }
+
+export const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_NLEAN");

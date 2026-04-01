@@ -23,3 +23,5 @@ export function dockerCmd(args: ClientArgs): string[] {
     ...["--xmss-public-template", args.xmss_pk_path],
   ];
 }
+
+export const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_LANTERN");

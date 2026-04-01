@@ -1,17 +1,13 @@
 import { join } from "jsr:@std/path/join";
 import { hardlinkOverwrite, joinLines, range, tmpDir } from "./reuse.ts";
-import {
-  docker_pull,
-  docker_run,
-  dockerName,
-  pathInDocker,
-  ROOT_DIR,
-} from "./docker.ts";
+import { docker_pull, docker_run, dockerName, ROOT_DIR } from "./docker.ts";
 import { existsSync } from "jsr:@std/fs/exists";
 import { encodeHex } from "jsr:@std/encoding/hex";
 
 const DOCKER_IMAGE =
   "docker.io/blockblaz/hash-sig-cli:devnet2@sha256:defb9b28094e408932b7a71634dd3ab15634a804ed24264395115ce3911f40b8";
+
+const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_HASHSIG");
 
 function pk_name(i: number) {
   return `validator_${i}_pk.ssz`;
@@ -71,7 +67,9 @@ class Cache {
     console.info(`generating ${missing.length} more hashsig keys`);
     const tmp_dir = tmpDir(join(ROOT_DIR, "cache/hashsig-tmp"));
     try {
-      await docker_pull(DOCKER_IMAGE, signal);
+      if (!LOCAL_BINARY) {
+        await docker_pull(DOCKER_IMAGE, signal);
+      }
       await docker_run(
         dockerName(),
         DOCKER_IMAGE,
@@ -80,13 +78,11 @@ class Cache {
           "generate",
           ...["--num-validators", `${missing.length}`],
           ...["--log-num-active-epochs", `${this.epochs_log}`],
-          ...[
-            "--output-dir",
-            pathInDocker(tmp_dir),
-          ],
+          ...["--output-dir", tmp_dir],
           ...["--export-format", "ssz"],
         ],
         (line) => console.info(`hashsig: ${line}`),
+        LOCAL_BINARY,
         signal,
       );
       for (const [i, item] of missing.entries()) {

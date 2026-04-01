@@ -20,3 +20,5 @@ export function dockerCmd(args: ClientArgs): string[] {
     ...["--metrics-port", `${args.ports.metrics}`],
   ];
 }
+
+export const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_LIGHTHOUSE");

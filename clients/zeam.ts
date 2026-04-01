@@ -19,3 +19,5 @@ export function dockerCmd(args: ClientArgs): string[] {
     ...["--node-key", args.node_key_path],
   ];
 }
+
+export const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_ZEAM");

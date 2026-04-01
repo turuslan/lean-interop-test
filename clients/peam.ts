@@ -19,3 +19,5 @@ export function dockerCmd(args: ClientArgs): string[] {
     ...["--listen", `/ip4/0.0.0.0/udp/${args.ports.quic}/quic-v1`],
   ];
 }
+
+export const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_PEAM");
