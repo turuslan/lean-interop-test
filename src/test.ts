@@ -111,7 +111,12 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
   const abort = new AbortController(), { signal } = abort;
   const off_abort = on(parent_signal, "abort", () => abort.abort());
   try {
-    const root_dir = join(ROOT_DIR, "data");
+    const root_dir = join(
+      ROOT_DIR,
+      `data/${test_fn.name}-${
+        args.clients.map((client) => client.NAME).join("-")
+      }`,
+    );
     removePath(root_dir, true);
     const genesis_dir = join(root_dir, "genesis");
     const names = args.clients.map((client, i) => `${client.NAME}_${i}`);
@@ -241,6 +246,7 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
 }
 
 export async function runTests(signal: AbortSignal) {
+  removePath(join(ROOT_DIR, "data"), true);
   for (const test of tests) {
     if (!signal.aborted) {
       console.info(`RUN TEST ${test.label}`);
