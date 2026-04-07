@@ -59,6 +59,8 @@ for (
     // [LIGHTHOUSE, LIGHTHOUSE],
 
     [QLEAN, QLEAN],
+    [QLEAN, QLEAN, QLEAN],
+    [QLEAN, QLEAN, QLEAN, QLEAN],
   ]
 ) {
   addTest(test_production_and_finality, {
