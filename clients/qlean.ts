@@ -3,11 +3,11 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "qlean";
 
 export const DOCKER_IMAGE =
-  "docker.io/qdrvm/qlean-mini:devnet-3@sha256:c0e22e4ce8b1b79c22edf2f8dc64b73e907a90c447ee5c06ba60f2881482ac94";
+  "docker.io/qdrvm/qlean-mini:devnet-3@sha256:05daf8e234a00280701b960a3c66d7300dae41b9690ef44d87a698ec71f8c5fb";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [
-    "qlean",
+    "/opt/qlean/bin/qlean",
     ...["--genesis", args.config_yaml_path],
     ...["--validator-registry-path", args.validators_yaml_path],
     ...["--bootnodes", args.nodes_yaml_path],
