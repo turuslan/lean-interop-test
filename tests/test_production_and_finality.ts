@@ -61,6 +61,12 @@ for (
     [QLEAN, QLEAN],
     [QLEAN, QLEAN, QLEAN],
     [QLEAN, QLEAN, QLEAN, QLEAN],
+    [ZEAM, QLEAN],
+    [QLEAN, ZEAM],
+    [ZEAM, ZEAM, QLEAN],
+    [QLEAN, ZEAM, ZEAM],
+    [ZEAM, QLEAN, QLEAN],
+    [QLEAN, QLEAN, ZEAM],
   ]
 ) {
   addTest(test_production_and_finality, {
