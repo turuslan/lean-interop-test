@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "grandine";
 
 export const DOCKER_IMAGE =
-  "docker.io/sifrai/lean:devnet-3@sha256:1b2597141a5cacd7d5f1fe629ce44128a9e3058f420f397c4ac723c21d065780";
+  "docker.io/sifrai/lean:devnet-3@sha256:4095313154b14465417e51c61c3116a53a889d30bf56e7346320400ba31458e0";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [

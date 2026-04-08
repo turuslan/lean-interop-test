@@ -7,7 +7,7 @@ import { runTests } from "./test.ts";
 const paths = Array.from(
   walkSync(join(ROOT_DIR, "tests"), { exts: [".ts"] }),
   (e) => e.path,
-);
+).sort();
 
 for (const path of paths) {
   await import(path);

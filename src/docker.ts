@@ -69,7 +69,7 @@ async function http(
   return await res.text();
 }
 
-function parse_ref(image: string) {
+export function parse_ref(image: string) {
   const m_hash = image.match(/^([^@]+)(?:@(sha256:.+))?$/);
   if (!m_hash) throw new Error(image);
   const m_tag = m_hash[1].match(/^(.+?)(?::([^:]+))?$/);

@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "ream";
 
 export const DOCKER_IMAGE =
-  "ghcr.io/reamlabs/ream:latest-devnet3@sha256:74c08eec2a5a0fd3c255f02e2f2d4f5d1f4cba9d434705a084ff0dd0bfb6feeb";
+  "ghcr.io/reamlabs/ream:latest-devnet3@sha256:6ff75e65502ba7a1476691238009048b430259df1077bb9f2869f522dbbd4ae1";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [

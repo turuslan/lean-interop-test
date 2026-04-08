@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "nlean";
 
 export const DOCKER_IMAGE =
-  "ghcr.io/nleaneth/nlean@sha256:019172da3727f33cb74de77becc9cea7c87e5f91dd3c0808c923a5417e7be3fa";
+  "ghcr.io/nleaneth/nlean:latest@sha256:a1a26062e56c0bcf2a066fa11a03bab48ea2521d3812551ec44026b9474e8de1";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [

@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "ethlambda";
 
 export const DOCKER_IMAGE =
-  "ghcr.io/lambdaclass/ethlambda:devnet3@sha256:f02eff591e971820f6c41ddfe5cac1321c0eb135275ac064a904938a41f15f9b";
+  "ghcr.io/lambdaclass/ethlambda:devnet3@sha256:03231d0ed88e94922d1e4d512ea86b233f5ea38e5b9212a15c8e3eb735d4c9d5";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [
