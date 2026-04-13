@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "peam";
 
 export const DOCKER_IMAGE =
-  "ghcr.io/malik672/peam:latest@sha256:474be3806380d399ff8a7b32b00f474167e8f74fbf0fa11d7813040df94c70eb";
+  "ghcr.io/malik672/peam:latest@sha256:ad83389c5e9dac1f03003fbd15869a0863095d774a4d58ba47035e4c9bf91f90";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [

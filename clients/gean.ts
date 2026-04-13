@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "gean";
 
 export const DOCKER_IMAGE =
-  "ghcr.io/geanlabs/gean:devnet3@sha256:dfa825b10b54b0b95a15282a4d8e9ff5f387f99ce4909f92982ae5105c670800";
+  "ghcr.io/geanlabs/gean:devnet3@sha256:6ef87770d116c4d7520a9fb5790edc109883db75e692617378a577c9ea09b077";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [

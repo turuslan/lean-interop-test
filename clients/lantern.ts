@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "lantern";
 
 export const DOCKER_IMAGE =
-  "docker.io/piertwo/lantern:v0.0.3@sha256:baa2f5dfaf1b9eb4500ffbf7207f87e6143e06c9c50cf7e28c6076dfea53126d";
+  "docker.io/piertwo/lantern:v0.0.4@sha256:a36ae5e251b3f479ef0577db276cbff58197f90e2d08894909ade9c5a798eb3c";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [

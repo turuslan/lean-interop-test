@@ -3,7 +3,7 @@ import { ClientArgs } from "../src/genesis.ts";
 export const NAME = "zeam";
 
 export const DOCKER_IMAGE =
-  "docker.io/blockblaz/zeam:devnet3@sha256:5289c958eff95de67455f12613ae658bebcd37b07cc88d2a7e49e4e26fb17b1e";
+  "docker.io/blockblaz/zeam:devnet4@sha256:8d98b65df7df8faf5d73300a96e207fddcc7fbd01dc39f1d4cf4460ecfcff408";
 
 export function dockerCmd(args: ClientArgs): string[] {
   return [
