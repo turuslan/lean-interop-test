@@ -136,8 +136,9 @@ async function runTest({ test_fn, args }: TestArg, parent_signal: AbortSignal) {
       data_dir: join(root_dir, name),
       ports: genesis.ports[i],
       node_key_path: genesis.nodeKeyPath(i),
-      xmss_sk_path: genesis.hashsig.sk_path(i),
-      xmss_pk_path: genesis.hashsig.pk_path(i),
+      // TODO
+      xmss_sk_path: genesis.hashsig.sk_attester_path(i),
+      xmss_pk_path: genesis.hashsig.pk_attester_path(i),
       config_yaml_path: genesis.config_yaml_path,
       nodes_yaml_path: genesis.nodes_yaml_path,
       validators_yaml_path: genesis.validators_yaml_path,

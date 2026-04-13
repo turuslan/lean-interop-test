@@ -9,14 +9,20 @@ const DOCKER_IMAGE =
 
 const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_HASHSIG");
 
-function pk_name(i: number) {
-  return `validator_${i}_pk.ssz`;
+function pk_attester_name(i: number) {
+  return `validator_${i}_attester_key_pk.ssz`;
 }
-function sk_name(i: number) {
-  return `validator_${i}_sk.ssz`;
+function sk_attester_name(i: number) {
+  return `validator_${i}_attester_key_sk.ssz`;
+}
+function pk_proposer_name(i: number) {
+  return `validator_${i}_proposer_key_pk.ssz`;
+}
+function sk_proposer_name(i: number) {
+  return `validator_${i}_proposer_key_sk.ssz`;
 }
 
-function manifest(epochs_log: number, pks: string[]) {
+function manifest(epochs_log: number, pks: Pubkey[]) {
   return joinLines([
     `key_scheme: SIGTopLevelTargetSumLifetime32Dim64Base8`,
     `hash_function: Poseidon2`,
@@ -28,19 +34,29 @@ function manifest(epochs_log: number, pks: string[]) {
     `validators:`,
     ...pks.flatMap((pk, i) => [
       `  - index: ${i}`,
-      `    pubkey_hex: 0x${pk}`,
-      `    privkey_file: ${sk_name(i)}`,
+      `    attester_key_pubkey_hex: ${pk.attester}`,
+      `    attester_key_privkey_file: ${sk_attester_name(i)}`,
+      `    proposer_key_pubkey_hex: ${pk.proposer}`,
+      `    proposer_key_privkey_file: ${sk_proposer_name(i)}`,
     ]),
   ]);
 }
 
+interface Pubkey {
+  attester: string;
+  proposer: string;
+}
 interface CacheItem {
   dir: string;
   exists: boolean;
-  sk_name: string;
-  sk_path: string;
-  pk_name: string;
-  pk_path: string;
+  sk_attester_name: string;
+  sk_attester_path: string;
+  pk_attester_name: string;
+  pk_attester_path: string;
+  sk_proposer_name: string;
+  sk_proposer_path: string;
+  pk_proposer_name: string;
+  pk_proposer_path: string;
 }
 class Cache {
   dir: string;
@@ -50,14 +66,21 @@ class Cache {
   }
   cacheItem(i: number): CacheItem {
     const dir = join(this.dir, `${i}`);
-    const sk_name = "sk.ssz", pk_name = "pk.ssz";
+    const sk_attester_name = "sk_attester.ssz",
+      pk_attester_name = "pk_attester.ssz";
+    const sk_proposer_name = "sk_proposer.ssz",
+      pk_proposer_name = "pk_proposer.ssz";
     return {
       dir,
       exists: existsSync(dir),
-      sk_name,
-      sk_path: join(dir, sk_name),
-      pk_name,
-      pk_path: join(dir, pk_name),
+      sk_attester_name,
+      sk_attester_path: join(dir, sk_attester_name),
+      pk_attester_name,
+      pk_attester_path: join(dir, pk_attester_name),
+      sk_proposer_name,
+      sk_proposer_path: join(dir, sk_proposer_name),
+      pk_proposer_name,
+      pk_proposer_path: join(dir, pk_proposer_name),
     };
   }
   async generate(count: number, signal: AbortSignal) {
@@ -89,12 +112,20 @@ class Cache {
         const tmp_item = join(tmp_dir, "item");
         Deno.mkdirSync(tmp_item, { recursive: true });
         Deno.renameSync(
-          join(tmp_dir, sk_name(i)),
-          join(tmp_item, item.sk_name),
+          join(tmp_dir, sk_attester_name(i)),
+          join(tmp_item, item.sk_attester_name),
         );
         Deno.renameSync(
-          join(tmp_dir, pk_name(i)),
-          join(tmp_item, item.pk_name),
+          join(tmp_dir, pk_attester_name(i)),
+          join(tmp_item, item.pk_attester_name),
+        );
+        Deno.renameSync(
+          join(tmp_dir, sk_proposer_name(i)),
+          join(tmp_item, item.sk_proposer_name),
+        );
+        Deno.renameSync(
+          join(tmp_dir, pk_proposer_name(i)),
+          join(tmp_item, item.pk_proposer_name),
         );
         Deno.renameSync(tmp_item, item.dir);
       }
@@ -102,21 +133,36 @@ class Cache {
       Deno.removeSync(tmp_dir, { recursive: true });
     }
   }
-  link(dir: string, i: number) {
-    const item = this.cacheItem(i);
-    hardlinkOverwrite(item.sk_path, join(dir, sk_name(i)));
-    hardlinkOverwrite(item.pk_path, join(dir, pk_name(i)));
-    const pk = encodeHex(Deno.readFileSync(item.pk_path));
-    return pk;
+  link(dir: string, i: number): Pubkey {
+    let item = this.cacheItem(i);
+    // TODO: zeam
+    item = {
+      ...item,
+      sk_proposer_name: item.sk_attester_name,
+      sk_proposer_path: item.sk_attester_path,
+      pk_proposer_name: item.pk_attester_name,
+      pk_proposer_path: item.pk_attester_path,
+    };
+    hardlinkOverwrite(item.sk_attester_path, join(dir, sk_attester_name(i)));
+    hardlinkOverwrite(item.pk_attester_path, join(dir, pk_attester_name(i)));
+    hardlinkOverwrite(item.sk_proposer_path, join(dir, sk_proposer_name(i)));
+    hardlinkOverwrite(item.pk_proposer_path, join(dir, pk_proposer_name(i)));
+    return {
+      attester: encodeHex(Deno.readFileSync(item.pk_attester_path)),
+      proposer: encodeHex(Deno.readFileSync(item.pk_proposer_path)),
+    };
   }
 }
 
 export interface HashsigInfo {
-  pks: string[];
+  pks: Pubkey[];
   manifest_path: string;
-  sk_path(i: number): string;
-  pk_path(i: number): string;
-  sk_name(i: number): string;
+  sk_attester_path(i: number): string;
+  pk_attester_path(i: number): string;
+  sk_proposer_path(i: number): string;
+  pk_proposer_path(i: number): string;
+  sk_attester_name(i: number): string;
+  sk_proposer_name(i: number): string;
 }
 export async function hashsig_generate(
   dir: string,
@@ -133,12 +179,19 @@ export async function hashsig_generate(
   return {
     pks,
     manifest_path,
-    sk_path(i: number) {
-      return join(dir, sk_name(i));
+    sk_attester_path(i: number) {
+      return join(dir, sk_attester_name(i));
     },
-    pk_path(i: number) {
-      return join(dir, pk_name(i));
+    pk_attester_path(i: number) {
+      return join(dir, pk_attester_name(i));
     },
-    sk_name,
+    sk_proposer_path(i: number) {
+      return join(dir, sk_proposer_name(i));
+    },
+    pk_proposer_path(i: number) {
+      return join(dir, pk_proposer_name(i));
+    },
+    sk_attester_name,
+    sk_proposer_name,
   };
 }

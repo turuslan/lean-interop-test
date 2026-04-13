@@ -74,7 +74,10 @@ export async function genesis_generate(
       `ACTIVE_EPOCH: ${epochs_log}`,
       `VALIDATOR_COUNT: ${layout.validators}`,
       "GENESIS_VALIDATORS:",
-      ...hashsig.pks.map((pk) => `    - "${pk}"`),
+      ...hashsig.pks.flatMap((pk) => [
+        `    - attestation_pubkey: "${pk.attester}"`,
+        `      proposal_pubkey: "${pk.proposer}"`,
+      ]),
     ]),
   );
 
@@ -112,8 +115,13 @@ export async function genesis_generate(
     joinLines(hashsig.pks.flatMap((pk, i) => [
       `${layout.names[i]}:`,
       `  - index: ${i}`,
-      `    pubkey_hex: ${pk}`,
-      `    privkey_file: ${hashsig.sk_name(i)}`,
+      // TODO: zeam
+      `    pubkey_hex: ${pk.attester}`,
+      `    privkey_file: ${hashsig.sk_attester_name(i)}`,
+      // `    attestation_pubkey_hex: ${pk.attester}`,
+      // `    attestation_privkey_file: ${hashsig.sk_attester_name(i)}`,
+      // `    proposal_pubkey_hex: ${pk.proposer}`,
+      // `    proposal_privkey_file: ${hashsig.sk_proposer_name(i)}`,
     ])),
   );
 
