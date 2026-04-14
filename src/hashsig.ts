@@ -5,7 +5,7 @@ import { existsSync } from "jsr:@std/fs/exists";
 import { encodeHex } from "jsr:@std/encoding/hex";
 
 const DOCKER_IMAGE =
-  "docker.io/blockblaz/hash-sig-cli:devnet2@sha256:defb9b28094e408932b7a71634dd3ab15634a804ed24264395115ce3911f40b8";
+  "docker.io/blockblaz/hash-sig-cli:devnet4@sha256:b20671895cb05449ec404fc416dd3d0a4196a3b1bbc4815b7359641d466bca8d";
 
 const LOCAL_BINARY = Deno.env.get("LOCAL_BINARY_HASHSIG");
 
