@@ -182,6 +182,7 @@ export interface ClientArgs {
   config_yaml_path: string;
   nodes_yaml_path: string;
   validators_yaml_path: string;
+  annotated_validators_yaml_path: string;
   validator_keys_manifest_yaml_path: string;
   hash_sig_keys_dir: string;
   validator_config_yaml_path: string;
