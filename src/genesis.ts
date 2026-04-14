@@ -115,13 +115,11 @@ export async function genesis_generate(
     joinLines(hashsig.pks.flatMap((pk, i) => [
       `${layout.names[i]}:`,
       `  - index: ${i}`,
-      // TODO: zeam
       `    pubkey_hex: ${pk.attester}`,
       `    privkey_file: ${hashsig.sk_attester_name(i)}`,
-      // `    attestation_pubkey_hex: ${pk.attester}`,
-      // `    attestation_privkey_file: ${hashsig.sk_attester_name(i)}`,
-      // `    proposal_pubkey_hex: ${pk.proposer}`,
-      // `    proposal_privkey_file: ${hashsig.sk_proposer_name(i)}`,
+      `  - index: ${i}`,
+      `    pubkey_hex: ${pk.proposer}`,
+      `    privkey_file: ${hashsig.sk_proposer_name(i)}`,
     ])),
   );
 
