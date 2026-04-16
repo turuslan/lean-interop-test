@@ -8,18 +8,13 @@ export const DOCKER_IMAGE =
 export function dockerCmd(args: ClientArgs): string[] {
   return [
     "/opt/qlean/bin/qlean",
-    ...["--genesis", args.config_yaml_path],
-    ...["--validator-registry-path", args.validators_yaml_path],
-    ...["--bootnodes", args.nodes_yaml_path],
-    ...["--validator-keys-manifest", args.validator_keys_manifest_yaml_path],
+    ...["--genesis-dir", args.genesis_dir],
     ...["--node-id", args.name],
     ...["--data-dir", args.data_dir],
     ...["--listen-addr", `/ip4/0.0.0.0/udp/${args.ports.quic}/quic-v1`],
     ...["--metrics-port", `${args.ports.metrics}`],
     ...["--api-port", `${args.ports.api}`],
     ...["--node-key", args.node_key_path],
-    ...["--xmss-sk", args.xmss_sk_path],
-    ...["--xmss-pk", args.xmss_pk_path],
   ];
 }
 
