@@ -9,14 +9,10 @@ export function dockerCmd(args: ClientArgs): string[] {
   return [
     "gean",
     ...["--data-dir", args.data_dir],
-    ...["--genesis", args.config_yaml_path],
-    ...["--bootnodes", args.nodes_yaml_path],
-    ...["--validator-registry-path", args.validators_yaml_path],
+    ...["--custom-network-config-dir", args.genesis_dir],
     ...["--node-id", args.name],
     ...["--node-key", args.node_key_path],
-    ...["--validator-keys", args.hash_sig_keys_dir],
-    ...["--listen-addr", `/ip4/0.0.0.0/udp/${args.ports.quic}/quic-v1`],
-    ...["--discovery-port", `${args.ports.quic}`],
+    ...["--gossipsub-port", `${args.ports.quic}`],
     ...["--metrics-port", `${args.ports.metrics}`],
     ...["--api-port", `${args.ports.api}`],
   ];
