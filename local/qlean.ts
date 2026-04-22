@@ -10,16 +10,6 @@ const env_gcc_14: Record<string, string> = Deno.build.os === "linux"
   ? { CXX: "g++-14" }
   : {};
 
-// TODO: qlean fix git submodule
-if (!existsSync(QLEAN_DIR)) {
-  console.info(`${QLEAN_DIR} doesn't exist`);
-  console.info(`clone repository`);
-  // deno-fmt-ignore
-  console.info(`  git clone https://github.com/qdrvm/qlean-mini.git ${QLEAN_DIR}`);
-  console.info(`or link existing directory`);
-  console.info(`  ln -snf QLEAN_DIR ${QLEAN_DIR}`);
-  Deno.exit();
-}
 if (!existsSync(join(VCPKG_DIR, "vcpkg"))) {
   run([join(VCPKG_DIR, "bootstrap-vcpkg.sh"), "-disableMetrics"]);
 }

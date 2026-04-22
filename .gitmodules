@@ -1,8 +1,7 @@
-# TODO: qlean fix git submodule
-# [submodule "local/qlean"]
-# 	path = local/qlean
-# 	url = https://github.com/qdrvm/qlean-mini.git
-# 	branch = devnet4
+[submodule "local/qlean"]
+	path = local/qlean
+	url = https://github.com/qdrvm/qlean-mini.git
+	branch = devnet4
 [submodule "local/qlean-vcpkg"]
 	path = local/qlean-vcpkg
 	url = https://github.com/microsoft/vcpkg.git
