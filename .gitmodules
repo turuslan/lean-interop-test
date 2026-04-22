@@ -10,5 +10,5 @@
 	url = https://github.com/lambdaclass/ethlambda.git
 [submodule "local/grandine"]
 	path = local/grandine
-	url = https://github.com/bomanaps/lean
+	url = https://github.com/bomanaps/lean.git
 	branch = devnet-4
