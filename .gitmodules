@@ -9,3 +9,7 @@
 [submodule "local/ethlambda"]
 	path = local/ethlambda
 	url = https://github.com/lambdaclass/ethlambda.git
+[submodule "local/grandine"]
+	path = local/grandine
+	url = https://github.com/bomanaps/lean
+	branch = devnet-4
