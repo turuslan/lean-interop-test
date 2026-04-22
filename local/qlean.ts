@@ -1,12 +1,11 @@
 import { LOCAL_DIR, run } from "./local.ts";
+import { CMAKE_EXE } from "./cmake.ts";
 import { existsSync } from "jsr:@std/fs/exists";
 import { join } from "jsr:@std/path/join";
 
 const QLEAN_DIR = join(LOCAL_DIR, "qlean");
 const BUILD_DIR = join(QLEAN_DIR, "build");
 const VCPKG_DIR = join(LOCAL_DIR, "qlean-vcpkg");
-const VENV_DIR = join(LOCAL_DIR, "qlean-venv");
-const CMAKE_EXE = join(VENV_DIR, "bin/cmake");
 const env_gcc_14: Record<string, string> = Deno.build.os === "linux"
   ? { CXX: "g++-14" }
   : {};
@@ -23,12 +22,6 @@ if (!existsSync(QLEAN_DIR)) {
 }
 if (!existsSync(join(VCPKG_DIR, "vcpkg"))) {
   run([join(VCPKG_DIR, "bootstrap-vcpkg.sh"), "-disableMetrics"]);
-}
-if (!existsSync(VENV_DIR)) {
-  run(["python3", "-m", "venv", VENV_DIR]);
-}
-if (!existsSync(CMAKE_EXE)) {
-  run([join(VENV_DIR, "bin/pip3"), "install", "cmake"]);
 }
 if (!existsSync(BUILD_DIR)) {
   run([CMAKE_EXE, "--preset=default"], {
